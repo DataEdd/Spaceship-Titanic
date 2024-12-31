@@ -5,6 +5,7 @@ train = pd.read_csv('Kaggle Comps/Spaceship Titanic/train-SpaceshipTitanic.csv')
 test = pd.read_csv('Kaggle Comps/Spaceship Titanic/test-SpaceshipTitanic.csv')
 
 #print(train.head())
+print("test.describe()")
 print(train.describe())
 
 
