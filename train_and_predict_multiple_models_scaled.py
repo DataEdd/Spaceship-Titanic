@@ -8,6 +8,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
 from sklearn.neural_network import MLPClassifier
+from catboost import CatBoostClassifier
 from data_cleaner import DataCleaner
 
 def train_and_save_model(model, model_name, X_train, y_train, X_val, y_val, X_test, passenger_ids):
@@ -38,6 +39,20 @@ def train_and_save_model(model, model_name, X_train, y_train, X_val, y_val, X_te
     submission.to_csv(out_path, index=False)
     print(f"{model_name} submission saved to: {out_path}")
 
+def align_columns(reference_df, *other_dfs):
+    """Align columns of other_dfs to match reference_df."""
+    aligned_dfs = []
+    for df in other_dfs:
+        for col in reference_df.columns:
+            if col not in df.columns:
+                df[col] = 0
+        for col in df.columns:
+            if col not in reference_df.columns:
+                df.drop(columns=[col], inplace=True)
+        df = df[reference_df.columns]
+        aligned_dfs.append(df)
+    return aligned_dfs
+
 def main():
     # Load datasets
     train_df = pd.read_csv("train1-SpaceshipTitanic.csv")
@@ -60,23 +75,13 @@ def main():
     X_val_cleaned = cleaner.transform(X_val)
     X_test_cleaned = cleaner.transform(test_df)
 
-    # Encode 'last_name' if present
-    if "last_name" in X_train_cleaned.columns:
-        # Combine all last_name data to avoid unseen labels
-        all_last_names = pd.concat([
-            X_train_cleaned["last_name"],
-            X_val_cleaned["last_name"],
-            X_test_cleaned["last_name"]
-        ])
+    # Print transformation steps
+    print("\n=== Data Cleaning Transformation Steps ===")
+    for step in cleaner.transform_steps_:
+        print(step)
 
-        # Fit the LabelEncoder on the combined data
-        encoder = LabelEncoder()
-        encoder.fit(all_last_names)
-
-        # Transform each dataset
-        X_train_cleaned["last_name"] = encoder.transform(X_train_cleaned["last_name"])
-        X_val_cleaned["last_name"] = encoder.transform(X_val_cleaned["last_name"])
-        X_test_cleaned["last_name"] = encoder.transform(X_test_cleaned["last_name"])
+    # Align columns using the cleaned training dataset as the reference
+    X_val_cleaned, X_test_cleaned = align_columns(X_train_cleaned, X_val_cleaned, X_test_cleaned)
 
     # Identify numeric and binary columns
     binary_columns = [col for col in X_train_cleaned.columns if set(X_train_cleaned[col].unique()) <= {0, 1}]
@@ -101,20 +106,14 @@ def main():
     X_val_scaled = combine_scaled_and_binary(X_val_scaled_numeric, X_val_cleaned, binary_columns)
     X_test_scaled = combine_scaled_and_binary(X_test_scaled_numeric, X_test_cleaned, binary_columns)
 
-    # Drop any remaining non-numeric columns
-    X_train_scaled = X_train_scaled.select_dtypes(include=["float64", "int64"])
-    X_val_scaled = X_val_scaled.select_dtypes(include=["float64", "int64"])
-    X_test_scaled = X_test_scaled.select_dtypes(include=["float64", "int64"])
-
     # Define models and pipelines
-# Define models and pipelines
     models = [
         (Pipeline([("model", LogisticRegression(max_iter=1000))]), "logistic_regression"),
         (Pipeline([("model", SVC(probability=True))]), "svm"),
-        (XGBClassifier(eval_metric="logloss"), "xgboost"),  # Use XGBClassifier directly
+        (XGBClassifier(eval_metric="logloss"), "xgboost"),
         (Pipeline([("model", MLPClassifier(hidden_layer_sizes=(32, 16), max_iter=500))]), "neural_network"),
+        (CatBoostClassifier(verbose=0), "catboost")  # CatBoost supports string features
     ]
-
 
     # Train and save for each model
     for model, model_name in models:

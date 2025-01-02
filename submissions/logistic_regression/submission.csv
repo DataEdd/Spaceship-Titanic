@@ -19,7 +19,7 @@ PassengerId,Transported
 0047_01,True
 0047_02,True
 0047_03,False
-0048_01,True
+0048_01,False
 0049_01,False
 0054_01,True
 0054_02,True
@@ -132,12 +132,12 @@ PassengerId,Transported
 0276_02,True
 0279_01,False
 0280_01,True
-0284_01,True
+0284_01,False
 0292_01,False
 0293_01,True
 0295_01,False
 0296_01,False
-0299_01,True
+0299_01,False
 0300_01,False
 0308_01,True
 0311_01,False
@@ -673,7 +673,7 @@ PassengerId,Transported
 1361_02,False
 1363_01,False
 1364_01,False
-1364_02,True
+1364_02,False
 1367_01,True
 1369_01,False
 1369_02,True
@@ -844,7 +844,7 @@ PassengerId,Transported
 1741_02,True
 1741_03,False
 1743_01,False
-1744_01,False
+1744_01,True
 1750_01,True
 1751_01,True
 1751_02,True
@@ -3883,7 +3883,7 @@ PassengerId,Transported
 8478_02,False
 8484_01,True
 8485_01,True
-8488_01,True
+8488_01,False
 8490_01,False
 8496_01,False
 8497_01,False
