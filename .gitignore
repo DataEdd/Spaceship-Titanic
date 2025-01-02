@@ -1,0 +1,29 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.env/
+.venv/
+.conda/
+
+# Dataset files (if stored locally and should not be pushed)
+*.csv
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Submissions directory (if outputs are local-only)
+submissions/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Operating system-specific files
+.DS_Store  # macOS
+Thumbs.db  # Windows
+
+# IDE configuration files
+.vscode/
+.idea/
