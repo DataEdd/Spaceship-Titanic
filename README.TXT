@@ -1,81 +1,95 @@
-===============================================================================
 SPACESHIP TITANIC PROJECT
 ===============================================================================
 
-I created this repository for the Spaceship Titanic challenge on Kaggle. 
-The core objective is to predict which passengers were transported to 
-an alternate dimension following the spaceship’s collision with a cosmic anomaly.
+This repository was created for the Spaceship Titanic challenge on Kaggle. 
+The objective is to predict which passengers were transported to an alternate 
+dimension following the spaceship’s collision with a cosmic anomaly.
 
 -------------------------------------------------------------------------------
 COMPETITION & DATASET
 -------------------------------------------------------------------------------
-Competition Link: https://www.kaggle.com/competitions/spaceship-titanic
+Competition Link: https://www.kaggle.com/competitions/spaceship-titanic  
 Dataset Source:  https://www.kaggle.com/competitions/spaceship-titanic/data
 
-The training data (about 8,700 rows) contains a "Transported" label 
-(True/False). The test data (about 4,300 rows) does not include the label, 
-so I must predict it. The final metric is classification accuracy.
+The training dataset contains approximately 8,700 rows and includes the 
+"Transported" label (True/False). The test dataset contains about 4,300 rows 
+without the label, and the task is to predict it. The evaluation metric for the 
+competition is classification accuracy.
 
 -------------------------------------------------------------------------------
 PROJECT FILES
 -------------------------------------------------------------------------------
-The files and scripts in the repo are organized as follows:
+The repository is organized as follows:
 
- - data_cleaner.py
-     A custom scikit‐learn transformer class (DataCleaner). It splits 
-     columns like PassengerId, handles missing values (e.g., Age, 
-     RoomService, VIP, CryoSleep), and one‐hot‐encodes categorical 
-     fields like Deck, Side, HomePlanet, and Destination.
+ - **data_cleaner.py**
+     A custom scikit-learn transformer class (`DataCleaner`) that handles:
+       - Splitting columns like `PassengerId` into components.
+       - Filling missing values for numerical and categorical fields.
+       - One-hot encoding categorical variables (e.g., Deck, Side, HomePlanet, Destination).
+       - Preparing datasets for use in pipelines.
 
- - train_and_predict.py
-     Builds a Pipeline (DataCleaner + LogisticRegression), fits it on 
-     train1-SpaceshipTitanic.csv, then predicts on test1-SpaceshipTitanic.csv, 
-     finally writing a submission.csv file.
+ - **train_and_predict_multiple_models_scaled.py**
+     The main script for the project:
+       - Implements advanced models such as Logistic Regression, SVM, XGBoost, and Neural Networks.
+       - Includes preprocessing pipelines with scaling, encoding, and train/validation splitting.
+       - Writes separate submission files for each model to their respective folders under `submissions/`.
 
- - main.py
-     Similar to train_and_predict.py, but also prints a confusion matrix 
-     and accuracy score on the training data (since I know those labels). 
-     It then creates the same submission.csv file.
+ - **train1-SpaceshipTitanic.csv**
+     The training dataset, including the `Transported` column.
 
- - train1-SpaceshipTitanic.csv
-     The training dataset, including the Transported column.
+ - **test1-SpaceshipTitanic.csv**
+     The test dataset, without the `Transported` column.
 
- - test1-SpaceshipTitanic.csv
-     The test dataset, without Transported. 
+ - **submissions/**
+     A folder containing the output predictions for each model. For example:
+       - `submissions/logistic_regression/submission.csv`
+       - `submissions/svm/submission.csv`
+       - `submissions/xgboost/submission.csv`
+       - `submissions/neural_network/submission.csv`
 
- - notebook.ipynb
-     A Jupyter notebook I use for exploratory data analysis and 
-     visualizations.
-
- - README.txt
-     This file (plain‐text overview of the project).
+ - **README.txt**
+     This file, providing an overview of the project.
 
 -------------------------------------------------------------------------------
 WORKFLOW
 -------------------------------------------------------------------------------
-1. Ensure that pandas, numpy, and scikit‐learn installed.
+1. **Setup Environment**:
+   - Ensure Python is installed along with required libraries (`pandas`, `numpy`, `scikit-learn`, `xgboost`).
+   - Place the dataset files (`train1-SpaceshipTitanic.csv` and `test1-SpaceshipTitanic.csv`) into the project directory.
 
-2. Place the CSVs (train1-SpaceshipTitanic.csv and test1-SpaceshipTitanic.csv) 
-   from Kaggle into this the local repo.
+2. **Run the Main Script**:
+   - Open the project directory in a terminal and run:
+     ```bash
+     python train_and_predict_multiple_models_scaled.py
+     ```
+   - This script trains multiple models on the training data, evaluates them on 
+     a validation split, and generates predictions for the test data. 
+     Submission files for each model are saved in the `submissions/` folder.
 
-3. Open project directory in terminal and run: python train_and_predict.py
-   That fits the data (cleaning + model) and writes submission.csv. 
+3. **Check Results**:
+   - Each model's validation accuracy and confusion matrix are printed to the 
+     terminal. Use this information to compare model performance.
 
-4. To see the model’s performance on the training set (confusion 
-   matrix and accuracy), run : python main.py
-   It prints the metrics and still produces submission.csv for Kaggle.
+4. **Submit to Kaggle**:
+   - Submit the file via the Kaggle CLI:
+     ```bash
+     kaggle competitions submit -c spaceship-titanic -f submissions/<model>/submission.csv -m "Submission from <model>"
+     ```
 
 -------------------------------------------------------------------------------
 RESULTS & NEXT STEPS
 -------------------------------------------------------------------------------
-My baseline LogisticRegression approach currently achieves around 78–79% 
-accuracy on the training data. The confusion matrix reveals a moderate number 
-of false positives and false negatives, so there is room for improvement.
+**Current Results**:
+   - Logistic Regression: ~78% validation accuracy.
+   - SVM: ~79% validation accuracy.
+   - XGBoost: Pending further tuning.
+   - Neural Network: Pending further tuning.
 
-In the future, I plan to:
- - Experiment with more advanced models like Knn or XGBoost.
- - Perform hyperparameter tuning and possibly feature engineering, 
-   for instance extracting info from the "last_name" column.
- - Incorporate a train/validation split or cross‐validation for a more 
-   reliable measure of generalization.
+**Future Work**:
+   - Hyperparameter tuning for advanced models (e.g., XGBoost, Neural Network).
+   - Explore additional feature engineering, such as extracting insights from the 
+     `last_name` column.
+   - Evaluate performance using cross-validation for more robust results.
+   - Automate model comparison and ensemble techniques to boost accuracy.
+
 ===============================================================================
